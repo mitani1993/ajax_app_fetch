@@ -13,7 +13,7 @@ function check() {
       // Ajaxに必要なオブジェクトを生成している
       const XHR = new XMLHttpRequest();
       // openでリクエストを初期化する
-      XHR.open("get", `/posts/${postId}`, true);
+      XHR.open("patch", `/posts/${postId}`, true);
       // レスポンスのタイプを指定する
       XHR.responseType = "json";
       // sendでリクエストを送信する
