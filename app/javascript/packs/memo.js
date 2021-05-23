@@ -1,23 +1,19 @@
-function memo() {
-  const submit = document.getElementById("submit");
-  submit.addEventListener("click", (e) => {
+function memo () {
+  const submit = document.getElementById('submit');
+  submit.addEventListener('click', (e) => {
     const formData = new FormData(document.getElementById("form"));
-    fetch('/posts', 
-          {method: 'POST',
-          credentials: 'same-origin',
-          headers: {
-            'X-CSRF-Token': getCsrfToken()},
-          body: formData
-    }).then(res => {
-      if (!res.ok) {
-        console.error("エラーレスポンス", res);
-      } else {
-        return res.json();
+    const XHR = new XMLHttpRequest();
+    XHR.open('post', '/posts', true);
+    XHR.responseType = "json";
+    XHR.send(formData);
+    XHR.onload = () => {
+      if (XHR.status != 200) {
+        alert(`Error ${XHR.status}: ${XHR.statusText}`);
+        return null;
       }
-    }).then(data => {
-      const item = data.post;
-      const list = document.getElementById("list");
-      const formText = document.getElementById("content");
+      const item = XHR.response.post;
+      const list = document.getElementById('list');
+      const formText = document.getElementById('content');
       const HTML = `
        <div class="post" data-id=${item.id}>
          <div class="post-date">
@@ -27,19 +23,10 @@ function memo() {
          ${item.content}
          </div>
        </div>`;
-      list.insertAdjacentHTML("afterend", HTML);
-      formText.value = "";
-    });
+       list.insertAdjacentHTML("afterend", HTML);
+       formText.value = "";
+    };
     e.preventDefault();
   });
-  const getCsrfToken = () => {
-    const metas = document.getElementsByTagName('meta');
-    for (let meta of metas) {
-        if (meta.getAttribute('name') === 'csrf-token') {
-          return meta.getAttribute('content');
-        }
-    }
-    return '';
-  }
 }
 window.addEventListener("load", memo);
